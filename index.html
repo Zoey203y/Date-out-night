@@ -191,6 +191,16 @@
   .idea.visited .idea-photo { margin-top: 0; }
   .visit-toggle.on { background: #e6f0e6; color: #3f6f3f; border-color: #9cc49c; }
   .wish-toggle.on { background: #fce8ee; color: var(--rose); border-color: #f0b8c8; }
+  #toTop {
+    position: fixed; right: 18px; bottom: 22px; z-index: 50;
+    width: 46px; height: 46px; border-radius: 50%;
+    border: none; background: var(--plum); color: #fff;
+    font-size: 20px; cursor: pointer; box-shadow: 0 6px 18px -6px rgba(28,26,38,0.5);
+    opacity: 0; pointer-events: none; transform: translateY(8px);
+    transition: opacity .2s, transform .2s;
+  }
+  #toTop.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  #toTop:hover { background: var(--ink); }
   .wish-badge {
     position: absolute; top: 0; left: 0;
     background: var(--rose); color: #fff;
@@ -505,6 +515,8 @@
     </div>
   </section>
 </div>
+
+<button id="toTop" title="Back to top" aria-label="Back to top">↑</button>
 
 <script>
 // Each seed has a stable sid so new ones can be merged in later without
@@ -1232,8 +1244,17 @@ document.getElementById('saveIdea').onclick = async () => {
 
 // ---------- spinner ----------
 document.getElementById('spinBtn').onclick = () => {
-  const pool = ideas.filter(matchesFilter);
-  if (!pool.length) { document.getElementById('spinResult').textContent='Add some ideas first'; return; }
+  // Spin only picks places you haven't been yet — unless you're deliberately
+  // looking at the Visited filter (then it's a "let's go again" spin).
+  let pool = ideas.filter(matchesFilter);
+  if (activeFilter !== 'Visited') pool = pool.filter(i => !i.visited);
+  if (!pool.length) {
+    document.getElementById('spinResult').textContent =
+      activeFilter === 'Visited' ? 'Nothing here yet' : "You've been everywhere here! 🎉";
+    document.getElementById('spinMeta').textContent = '';
+    document.getElementById('spinLink').innerHTML = '';
+    return;
+  }
   const res = document.getElementById('spinResult');
   const meta = document.getElementById('spinMeta');
   const link = document.getElementById('spinLink');
@@ -1520,6 +1541,13 @@ function markSynced() {
   setInterval(autoSync, 8000);
   // also sync when the app regains focus (e.g. you switch back to the tab)
   document.addEventListener('visibilitychange', () => { if (!document.hidden) autoSync(); });
+
+  // Back-to-top button: appears after scrolling down, smooth-scrolls up.
+  const toTop = document.getElementById('toTop');
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 400);
+  });
+  toTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 })();
 </script>
 </body>

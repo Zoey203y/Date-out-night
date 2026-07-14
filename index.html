@@ -234,6 +234,85 @@
   .gate-card .btn-primary { width: 100%; }
   #spaceHint { font-size: 13px; color: var(--rose); margin-top: 10px; min-height: 16px; }
   .gate-fine { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin: 14px 0 0; opacity: 0.85; }
+  .pop-intro { font-size: 13px; color: var(--muted); line-height: 1.5; text-align: center; margin: 0 0 18px; }
+  .pop-tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+  .pop-tab {
+    background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    padding: 8px 14px; font-size: 13px; font-family: inherit; cursor: pointer;
+    color: var(--muted); transition: all .15s;
+  }
+  .pop-tab.active { background: var(--plum); color: #fff; border-color: var(--plum); }
+  .pop-row {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .pop-row.top { border-color: var(--gold); background: #fffdf6; }
+  .pop-rank { font-size: 20px; min-width: 30px; text-align: center; color: var(--muted); font-weight: 600; }
+  .pop-row.top .pop-rank { font-size: 24px; }
+  .pop-body { flex: 1; min-width: 0; }
+  .pop-title { font-family: 'Fraunces', serif; font-size: 16px; color: var(--ink); margin-bottom: 3px; }
+  .pop-metric { font-size: 12.5px; color: var(--muted); }
+  .pop-open {
+    background: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 12px; font-size: 12px; font-family: inherit; cursor: pointer;
+    color: var(--plum); white-space: nowrap; transition: all .15s;
+  }
+  .pop-open:hover { background: var(--plum); color: #fff; border-color: var(--plum); }
+  /* leaderboards */
+  .pop-tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+  .pop-tab {
+    background: #fff; border: 1px solid var(--line); border-radius: 20px;
+    padding: 7px 14px; font-size: 13px; font-family: inherit; color: var(--muted);
+    cursor: pointer; transition: all .15s;
+  }
+  .pop-tab.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .pop-intro { text-align: center; font-size: 13px; color: var(--muted); margin: 0 0 18px; line-height: 1.5; }
+  .pop-row {
+    display: flex; align-items: center; gap: 14px;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .pop-row.top { border-color: var(--gold); background: #fffdf6; }
+  .pop-rank {
+    font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600;
+    color: var(--muted); width: 26px; text-align: center; flex-shrink: 0;
+  }
+  .pop-row.top .pop-rank { color: var(--gold); }
+  .pop-body { flex: 1; min-width: 0; }
+  .pop-body h4 { margin: 0 0 3px; font-size: 15px; font-family: 'Fraunces', serif; color: var(--ink); }
+  .pop-metric { font-size: 12.5px; color: var(--muted); }
+  .pop-go {
+    background: none; border: none; color: var(--plum); font-size: 18px;
+    cursor: pointer; padding: 4px 8px; flex-shrink: 0;
+  }
+  .pop-go:hover { color: var(--ink); }
+  /* visibility toggle */
+  .vis-toggle { display: flex; gap: 8px; }
+  .vis-opt {
+    flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 10px;
+    background: #fff; font-family: inherit; font-size: 14px; color: var(--muted);
+    cursor: pointer; transition: all .15s;
+  }
+  .vis-opt.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .vis-note { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.45; }
+  .vis-note.warn { color: var(--rose); }
+  .entry-public-tag {
+    display: inline-block; background: #e8f0e8; color: #3f6f3f;
+    font-size: 11px; padding: 3px 9px; border-radius: 6px; margin-left: 8px;
+  }
+  .entry-share {
+    position: absolute; top: 10px; right: 70px;
+    background: none; border: none; cursor: pointer;
+    font-size: 15px; color: var(--line); transition: color .15s;
+  }
+  .entry-share:hover { color: var(--plum); }
+  /* public entries under an idea */
+  .idea-public { border-top: 1px dashed var(--line); margin-top: 12px; padding-top: 10px; }
+  .idea-public-h { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .pub-note { background: var(--paper); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12.5px; color: #3d3849; line-height: 1.45; }
+  .pub-note .pub-stars { color: var(--gold); font-size: 11px; }
+  .pub-note .pub-who { color: var(--muted); font-size: 11px; }
   .wish-badge {
     position: absolute; top: 0; left: 0;
     background: var(--rose); color: #fff;
@@ -392,6 +471,17 @@
 </style>
 </head>
 <body>
+<div id="sharedView" style="display:none;">
+  <div class="gate-card" style="margin:40px auto;">
+    <div class="gate-emoji">📔</div>
+    <div class="gate-brand">Two for Tonight</div>
+    <h2 id="sharedTitle" style="margin-bottom:6px;"></h2>
+    <div id="sharedStars" style="color:var(--gold); font-size:16px; margin-bottom:10px;"></div>
+    <p id="sharedNotes" style="text-align:left; color:#3d3849; font-size:14.5px; line-height:1.6;"></p>
+    <p id="sharedMeta" class="gate-fine"></p>
+    <button class="btn-primary" id="sharedEnter" style="margin-top:14px;">Start our own space →</button>
+  </div>
+</div>
 <div id="spaceGate">
   <div class="gate-card">
     <div class="gate-emoji">🌙</div>
@@ -425,12 +515,16 @@
 
   <div class="tabs">
     <button class="tab active" data-view="ideas">Ideas</button>
+    <button class="tab" data-view="popular">🔥 Popular</button>
     <button class="tab" data-view="journal">Journal</button>
   </div>
 
   <div style="text-align:center; margin: -14px 0 22px;">
     <button id="syncBtn" style="background:none; border:none; color:var(--muted); font-family:'Inter',sans-serif; font-size:12px; cursor:pointer; padding:4px 10px;">
       ↻ Sync — pull the latest from you both
+    </button>
+    <button id="shareAppBtn" style="background:none; border:none; color:var(--muted); font-family:'Inter',sans-serif; font-size:12px; cursor:pointer; padding:4px 10px;">
+      🔗 Share this app
     </button>
   </div>
 
@@ -499,7 +593,17 @@
     <div id="ideaGrid"><div class="loading">Loading your ideas…</div></div>
   </section>
 
-  <!-- JOURNAL VIEW -->
+  <!-- POPULAR / LEADERBOARDS VIEW -->
+  <section class="view" id="popular">
+    <p class="pop-intro">What couples across London are loving — anonymous counts from everyone using the app. Nobody's journal or identity is ever shared.</p>
+    <div class="pop-tabs">
+      <button class="pop-tab active" data-board="wish">💛 Most wanted</button>
+      <button class="pop-tab" data-board="visit">📍 Most visited</button>
+      <button class="pop-tab" data-board="rating">⭐ Best rated</button>
+    </div>
+    <div id="popList"><div class="loading">Loading the charts…</div></div>
+  </section>
+
   <section class="view" id="journal">
     <!-- Real journal content (space code already isolates couples) -->
     <div id="journalContent">
@@ -548,6 +652,14 @@
         <div id="e-photo-preview" class="entry-photo-strip"></div>
         <button type="button" class="btn-ghost" id="e-add-photo">📷 Add photo</button>
         <input type="file" id="entryPhotoInput" accept="image/*" style="display:none">
+      </div>
+      <div class="field">
+        <label>Visibility</label>
+        <div class="vis-toggle">
+          <button type="button" class="vis-opt active" data-vis="private">🔒 Private</button>
+          <button type="button" class="vis-opt" data-vis="public">🌍 Public</button>
+        </div>
+        <p class="vis-note" id="visNote">Only you two can see this.</p>
       </div>
       <button class="btn-primary" id="saveEntry">Save to journal</button>
     </div>
@@ -690,6 +802,27 @@ const SEED = [
   {sid:"u62", title:"Sunday in the Park with George", cat:"Culture", area:"Barbican", notes:"Sondheim's virtuosic 1984 classic inspired by Seurat's pointillist masterpiece — starring Ariana Grande & Jonathan Bailey. Tickets sell out instantly, book the second they drop.", rec:5, blurb:"Sunday in the Park with George,桑德海姆经典,灵感来自修拉的点彩名画,Ariana Grande和Jonathan Bailey主演,秒售罄,开票要立刻抢。", map:"https://www.google.com/maps/search/?api=1&query=Sunday%20in%20the%20Park%20with%20George%20Barbican%20London"},
   {sid:"u63", title:"Cats at the Open Air Theatre", cat:"Culture", area:"Regent's Park", notes:"A brand new outdoor production of Lloyd Webber's Cats at the gorgeous Regent's Park Open Air Theatre — 'Memory', 'Macavity' under the summer sky. Picnic first.", rec:4, blurb:"Cats 全新户外版,在美丽的摄政公园露天剧场,《Memory》《Macavity》在夏夜星空下。先野餐再看戏。", map:"https://www.google.com/maps/search/?api=1&query=Cats%20at%20the%20Open%20Air%20Theatre%20Regent%27s%20Park%20London"},
   {sid:"u64", title:"A play at the National Theatre", cat:"Culture", area:"Southbank", notes:"Skip the musicals for serious drama — the NT consistently stages the best new plays. Cheap day tickets, riverside bar, and the Southbank to wander after.", rec:4, blurb:"换个口味看正剧,国家剧院常年上演最好的新戏。当日票便宜,河边有酒吧,看完还能逛南岸。", map:"https://www.google.com/maps/search/?api=1&query=A%20play%20at%20the%20National%20Theatre%20Southbank%20London"},
+  // ----- water sports, racket sports, light activity, playful -----
+  {sid:"u65", title:"Kayaking on the Thames", cat:"Active", area:"Richmond / Petersham", notes:"Self-guided kayak between Richmond Bridge and Teddington Lock — stable touring kayaks, islands and riverside 'jungle'. ~£42-50pp for 2.5-3hrs. Some trips even stop at a riverside pub.", rec:5, blurb:"泰晤士河划皮划艇,从Richmond Bridge到Teddington Lock,稳当的旅行艇,沿途有小岛和河岸绿林。2.5-3小时约£42-50/人,有的路线还会停靠河边酒吧。", map:"https://www.google.com/maps/search/?api=1&query=Kayaking%20on%20the%20Thames%20Richmond%20/%20Petersham%20London"},
+  {sid:"u66", title:"Paddleboarding (SUP) on the Thames", cat:"Active", area:"Richmond / Kew", notes:"Stand-up paddleboarding with Paddle Richmond or Active360 — beginner-friendly coaches, secret islands, loads of wildlife. Sunset sessions are the ones to book.", rec:4, blurb:"泰晤士河立式划桨(SUP),Paddle Richmond或Active360有新手友好的教练,能划到秘密小岛、看到很多野生动物。日落场次最值得订。", map:"https://www.google.com/maps/search/?api=1&query=Paddleboarding%20%28SUP%29%20on%20the%20Thames%20Richmond%20/%20Kew%20London"},
+  {sid:"u67", title:"Sunset kayak / canoe adventure", cat:"Active", area:"Petersham", notes:"A guided sunset paddle — golden hour on the water, then a pint. One of the most romantic active dates in London. Book ahead in summer.", rec:5, blurb:"日落皮划艇/独木舟,黄昏时分在水上,结束再去喝杯啤酒。伦敦最浪漫的运动型约会之一。夏天要提前订。", map:"https://www.google.com/maps/search/?api=1&query=Sunset%20kayak%20/%20canoe%20adventure%20Petersham%20London"},
+  {sid:"u68", title:"Pedalo on a park boating lake", cat:"Outdoors", area:"Hyde Park / Regent's Park", notes:"Cheap, silly and lovely — hire a rowboat or swan pedalo on the lake at Hyde Park, Regent's Park or Alexandra Palace. Bring snacks, take your time.", rec:4, blurb:"公园湖上踩天鹅船,便宜、傻气又可爱。海德公园、摄政公园、Alexandra Palace都有租船。带上零食慢慢划。", map:"https://www.google.com/maps/search/?api=1&query=Pedalo%20on%20a%20park%20boating%20lake%20Hyde%20Park%20/%20Regent%27s%20Park%20London"},
+  {sid:"u69", title:"Padel court session", cat:"Active", area:"Various", notes:"London's padel boom — easier to pick up than tennis, hilarious as a doubles pair. Courts across the city, rackets hireable. Great low-stakes competitive date.", rec:4, blurb:"打Padel(板式网球),伦敦最近超火,比网球好上手,两个人打双打特别欢乐。全城都有场地,球拍可租。低压力的竞技约会。", map:"https://www.google.com/maps/search/?api=1&query=Padel%20court%20session%20Various%20London"},
+  {sid:"u70", title:"Tennis in a park", cat:"Active", area:"Various", notes:"Book a public court (many are free or a few pounds), bring two rackets and zero expectations. Finish with ice cream. Very easy, very fun.", rec:3, blurb:"公园打网球,公共球场很多是免费或几镑,带两支拍子、零期待地打。结束吃个冰淇淋。轻松又好玩。", map:"https://www.google.com/maps/search/?api=1&query=Tennis%20in%20a%20park%20Various%20London"},
+  {sid:"u71", title:"Table tennis at Bounce", cat:"Active", area:"Farringdon / Old Street", notes:"Ping pong bar — cocktails, pizza and competitive doubles. Loud, silly, brilliant for a laugh. Book a table for two.", rec:4, blurb:"Bounce 乒乓球酒吧,鸡尾酒配披萨,双打对战。吵闹、傻气、笑到不行。订个双人台。", map:"https://www.google.com/maps/search/?api=1&query=Table%20tennis%20at%20Bounce%20Farringdon%20/%20Old%20Street%20London"},
+  {sid:"u72", title:"Badminton / squash court hire", cat:"Active", area:"Various", notes:"Book an hour at a leisure centre — cheap, sweaty, oddly romantic. A proper low-cost active date that gets you both moving.", rec:3, blurb:"羽毛球/壁球场,在体育中心订一小时,便宜、出汗、意外地浪漫。真正低成本的运动约会。", map:"https://www.google.com/maps/search/?api=1&query=Badminton%20/%20squash%20court%20hire%20Various%20London"},
+  {sid:"u73", title:"Roller disco at Roller Nation", cat:"Active", area:"Hackney Wick", notes:"London's biggest permanent skate rink — retro club nights, soul skate sessions, huge bar. Falling over together is half the fun.", rec:4, blurb:"Roller Nation 轮滑迪斯科,伦敦最大的常设轮滑场,复古club之夜、soul skate场次,还有大酒吧。一起摔跤就是乐趣的一半。", map:"https://www.google.com/maps/search/?api=1&query=Roller%20disco%20at%20Roller%20Nation%20Hackney%20Wick%20London"},
+  {sid:"u74", title:"Ice skating (winter)", cat:"Active", area:"Somerset House / Tower of London", notes:"Winter classic — skate hand-in-hand under fairy lights at Somerset House, the Natural History Museum, Tower of London or Battersea Power Station.", rec:5, blurb:"冬季经典:在Somerset House、自然史博物馆、伦敦塔或Battersea电站的溜冰场,牵着手在小彩灯下滑冰。", map:"https://www.google.com/maps/search/?api=1&query=Ice%20skating%20%28winter%29%20Somerset%20House%20/%20Tower%20of%20London%20London"},
+  {sid:"u75", title:"Outdoor yoga in the park", cat:"Active", area:"Various", notes:"A gentle joint class — many parks run summer yoga (some free). Stretch, breathe, then coffee. Low effort, high feel-good.", rec:3, blurb:"公园户外瑜伽,很多公园夏天有课(有些免费)。一起拉伸、呼吸,结束喝咖啡。低强度、高愉悦。", map:"https://www.google.com/maps/search/?api=1&query=Outdoor%20yoga%20in%20the%20park%20Various%20London"},
+  {sid:"u76", title:"Sunrise walk up Primrose Hill", cat:"Outdoors", area:"Primrose Hill", notes:"Set an alarm, climb the hill, watch London wake up. Bring a thermos. Free, gorgeous, and you'll feel smug all day.", rec:4, blurb:"日出爬Primrose Hill,定个闹钟,爬上山看伦敦醒来。带个保温杯。免费、美极了,而且一整天都会很得意。", map:"https://www.google.com/maps/search/?api=1&query=Sunrise%20walk%20up%20Primrose%20Hill%20Primrose%20Hill%20London"},
+  {sid:"u77", title:"Cycle the Regent's Canal towpath", cat:"Active", area:"Little Venice → Limehouse", notes:"Hire bikes and ride the canal from Little Venice through Camden to Limehouse — narrowboats, wildlife, canalside pubs to stop at.", rec:4, blurb:"骑车沿摄政运河纤道,从Little Venice经Camden骑到Limehouse,一路是窄船、野生动物、运河边的酒吧可以停。", map:"https://www.google.com/maps/search/?api=1&query=Cycle%20the%20Regent%27s%20Canal%20towpath%20Little%20Venice%20%E2%86%92%20Limehouse%20London"},
+  {sid:"u78", title:"Hampstead Heath swimming ponds", cat:"Active", area:"Hampstead", notes:"Wild swimming in the mixed pond (or the men's/ladies' ponds). Bracing, joyful, very London. Follow with a pub roast.", rec:4, blurb:"Hampstead Heath 野泳池,在混合池(或男/女池)里游。冰爽、畅快、非常伦敦。游完去酒吧吃烤肉。", map:"https://www.google.com/maps/search/?api=1&query=Hampstead%20Heath%20swimming%20ponds%20Hampstead%20London"},
+  {sid:"u79", title:"Emirates Air Line cable car at sunset", cat:"Outdoors", area:"Greenwich Peninsula", notes:"Soar over the Thames in a cable car — book a private cabin with champagne if you're feeling fancy. Time it for sunset. Cheap and underrated.", rec:4, blurb:"泰晤士河缆车,可以订带香槟的私人厢。挑日落时间。便宜又被低估。", map:"https://www.google.com/maps/search/?api=1&query=Emirates%20Air%20Line%20cable%20car%20at%20sunset%20Greenwich%20Peninsula%20London"},
+  {sid:"u80", title:"Fairgame indoor fairground", cat:"Something new", area:"Canary Wharf", notes:"Immersive indoor fairground — Whac-A-Mole, Skeeball, Shoot the Clown, with wristband scoring and a leaderboard. Competitive, colourful, very fun.", rec:4, blurb:"Fairgame 室内游乐场,打地鼠、Skeeball、射击小丑,手环计分还有排行榜。竞技、缤纷、超好玩。", map:"https://www.google.com/maps/search/?api=1&query=Fairgame%20indoor%20fairground%20Canary%20Wharf%20London"},
+  {sid:"u81", title:"Escape the Power Cut (Battersea)", cat:"Something new", area:"Battersea Power Station", notes:"Story-led escape game inside Battersea Power Station's Control Room B. 90 minutes, two cocktails each included, built for pairs.", rec:4, blurb:"Battersea电站B控制室里的剧情密室逃脱,90分钟,每人含两杯鸡尾酒,专为两人设计。", map:"https://www.google.com/maps/search/?api=1&query=Escape%20the%20Power%20Cut%20%28Battersea%29%20Battersea%20Power%20Station%20London"},
+  {sid:"u82", title:"Crazy golf at Swingers", cat:"Active", area:"West End / City", notes:"Indoor crazy golf with street food and cocktails — genuinely a great icebreaker date. Two courses, competitive but silly.", rec:4, blurb:"Swingers 疯狂高尔夫,室内球场配街头小吃和鸡尾酒,超好的破冰约会。两个球场,竞技但傻气。", map:"https://www.google.com/maps/search/?api=1&query=Crazy%20golf%20at%20Swingers%20West%20End%20/%20City%20London"},
+  {sid:"u83", title:"Archery / axe-free target session", cat:"Active", area:"Various", notes:"Try archery at a London range — surprisingly meditative, and satisfying when you finally hit the gold. Beginners always welcome.", rec:3, blurb:"射箭,伦敦有靶场可以体验,意外地很静心,射中靶心时超有成就感。新手友好。", map:"https://www.google.com/maps/search/?api=1&query=Archery%20/%20axe-free%20target%20session%20Various%20London"},
+  {sid:"u84", title:"Trampoline park bounce session", cat:"Active", area:"Various", notes:"An hour of pure childish joy at a trampoline park — dodgeball courts, foam pits, slam-dunk lanes. You will both ache tomorrow.", rec:3, blurb:"蹦床公园,一小时纯粹的童趣:躲避球场、海绵池、灌篮道。明天你俩都会酸痛。", map:"https://www.google.com/maps/search/?api=1&query=Trampoline%20park%20bounce%20session%20Various%20London"},
 ];
 
 const CATS = ["All","Wish list","Visited","Food & drink","Culture","Outdoors","Active","Cosy night","Something new"];
@@ -715,7 +848,7 @@ const SB_HEADERS = {
 // touch each other's data. The original owner's pre-space data has NO prefix;
 // we treat that legacy data as belonging to the special OWNER_SPACE so it
 // carries over seamlessly.
-const OWNER_SPACE = 'zoey';          // your space inherits the original data
+const OWNER_SPACE = 'bengbeng';      // your space inherits the original data
 let SPACE = localStorage.getItem('dn_space') || '';
 const rowId = (localId) => `${SPACE}::${localId}`;
 const isOwner = () => SPACE === OWNER_SPACE;
@@ -806,6 +939,87 @@ async function sbReplaceAll(table, list) {
   }
 }
 
+// ---------- popular board (anonymous aggregate counts) ----------
+// The `stats` table holds ONLY numbers + the idea title — never who did what,
+// never journal content. That keeps private spaces private while still letting
+// everyone see what's popular across all couples.
+
+// Atomically bump a stat. Deltas can be negative (e.g. un-wishing).
+async function bumpStat(sid, title, { wish = 0, visit = 0, ratingSum = 0, ratingN = 0 } = {}) {
+  if (!sid) return;                       // custom user ideas have no shared sid
+  if (!wish && !visit && !ratingSum && !ratingN) return;
+  try {
+    await fetch(`${SB_URL}/rest/v1/rpc/bump_stat`, {
+      method: 'POST',
+      headers: SB_HEADERS,
+      body: JSON.stringify({
+        p_sid: sid, p_title: title || '',
+        p_wish: wish, p_visit: visit,
+        p_rating_sum: ratingSum, p_rating_n: ratingN,
+      }),
+    });
+  } catch { /* stats are best-effort; never block the user */ }
+}
+
+// Read the whole stats table for the leaderboards.
+async function readStats() {
+  const r = await fetch(`${SB_URL}/rest/v1/stats?select=sid,title,wish_count,visit_count,rating_sum,rating_n`, { headers: SB_HEADERS });
+  if (!r.ok) throw new Error('stats read ' + r.status);
+  return r.json();
+}
+
+// ---------- public entries (opt-in, anonymised) ----------
+// A public entry carries ONLY: title, date, rating, notes and which idea it's
+// about. Never photos, never the address, never the space code — so sharing a
+// memory can't leak who you are or where you live.
+function publicIdFor(entryId) { return 'pub_' + entryId; }
+
+async function publishEntry(e, ideaTitle) {
+  const row = {
+    id: publicIdFor(e.id),
+    sid: e.sid || null,
+    idea_title: ideaTitle || e.title || '',
+    title: e.title || '',
+    entry_date: e.date || '',
+    rating: e.rating || 0,
+    notes: e.notes || '',           // text only — the user chose to share this
+  };
+  const r = await fetch(`${SB_URL}/rest/v1/public_entries`, {
+    method: 'POST',
+    headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify(row),
+  });
+  if (!r.ok) throw new Error('publish ' + r.status);
+}
+
+async function unpublishEntry(entryId) {
+  const id = publicIdFor(entryId);
+  await fetch(`${SB_URL}/rest/v1/public_entries?id=eq.${encodeURIComponent(id)}`, {
+    method: 'DELETE', headers: SB_HEADERS,
+  });
+}
+
+// All public entries, newest first. Used for the per-idea "what others said".
+let publicCache = null;
+async function readPublicEntries() {
+  const r = await fetch(`${SB_URL}/rest/v1/public_entries?select=id,sid,idea_title,title,entry_date,rating,notes&order=created_at.desc`, { headers: SB_HEADERS });
+  if (!r.ok) throw new Error('public read ' + r.status);
+  return r.json();
+}
+
+async function loadPublic() {
+  try { publicCache = await readPublicEntries(); }
+  catch { publicCache = []; }
+}
+
+// Fetch one public entry by its id (for the shared read-only link).
+async function readPublicEntry(id) {
+  const r = await fetch(`${SB_URL}/rest/v1/public_entries?id=eq.${encodeURIComponent(id)}&select=id,sid,idea_title,title,entry_date,rating,notes`, { headers: SB_HEADERS });
+  if (!r.ok) return null;
+  const rows = await r.json();
+  return rows[0] || null;
+}
+
 function seedToIdea(s) {
   return { id: s.sid, sid: s.sid, title: s.title, cat: s.cat, area: s.area,
            notes: s.notes, rec: s.rec||0, blurb: s.blurb||"", map: s.map||"",
@@ -894,6 +1108,7 @@ document.querySelectorAll('.tab').forEach(t => {
     t.classList.add('active');
     document.getElementById(t.dataset.view).classList.add('active');
     if (t.dataset.view === 'journal') applyJournalLock();
+    if (t.dataset.view === 'popular') loadPopular();
   };
 });
 
@@ -901,7 +1116,79 @@ function switchTo(view) {
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.view===view));
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active', x.id===view));
   if (view === 'journal') applyJournalLock();
+  if (view === 'popular') loadPopular();
 }
+
+// ---------- popular boards ----------
+let popBoard = 'wish';           // wish | visit | rating
+let statsCache = null;
+const MIN_RATINGS = 3;           // a place needs a few reviews before it can chart
+
+async function loadPopular() {
+  const list = document.getElementById('popList');
+  try {
+    statsCache = await readStats();
+  } catch {
+    list.innerHTML = '<div class="empty"><p>Could not load the charts</p><p>Check your connection and try again.</p></div>';
+    return;
+  }
+  renderPopular();
+}
+
+function renderPopular() {
+  const list = document.getElementById('popList');
+  const rows = statsCache || [];
+  let ranked = [];
+
+  if (popBoard === 'wish') {
+    ranked = rows.filter(r => r.wish_count > 0)
+                 .sort((a,b) => b.wish_count - a.wish_count)
+                 .map(r => ({ ...r, metric: `${r.wish_count} ${r.wish_count===1?'couple wants':'couples want'} to go` }));
+  } else if (popBoard === 'visit') {
+    ranked = rows.filter(r => r.visit_count > 0)
+                 .sort((a,b) => b.visit_count - a.visit_count)
+                 .map(r => ({ ...r, metric: `${r.visit_count} ${r.visit_count===1?'couple has':'couples have'} been` }));
+  } else {
+    ranked = rows.filter(r => r.rating_n >= MIN_RATINGS)
+                 .map(r => ({ ...r, avg: r.rating_sum / r.rating_n }))
+                 .sort((a,b) => b.avg - a.avg)
+                 .map(r => ({ ...r, metric: `${r.avg.toFixed(1)}★ from ${r.rating_n} nights out` }));
+  }
+
+  if (!ranked.length) {
+    const msg = popBoard === 'rating'
+      ? `A place needs ${MIN_RATINGS} reviews before it can chart.`
+      : 'Be the first to mark something!';
+    list.innerHTML = `<div class="empty"><p>Charts are warming up</p><p>${msg}</p></div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  ranked.slice(0, 20).forEach((r, idx) => {
+    const el = document.createElement('div');
+    el.className = 'pop-row' + (idx < 3 ? ' top' : '');
+    const medal = ['🥇','🥈','🥉'][idx] || (idx + 1);
+    const mine = ideas.find(i => i.sid === r.sid);
+    el.innerHTML = `
+      <div class="pop-rank">${medal}</div>
+      <div class="pop-body">
+        <div class="pop-title">${esc(r.title || r.sid)}</div>
+        <div class="pop-metric">${esc(r.metric)}</div>
+      </div>
+      ${mine ? '<button class="pop-open">View →</button>' : ''}`;
+    const btn = el.querySelector('.pop-open');
+    if (btn) btn.onclick = () => revealIdea(mine);
+    list.appendChild(el);
+  });
+}
+
+document.querySelectorAll('.pop-tab').forEach(t => {
+  t.onclick = () => {
+    popBoard = t.dataset.board;
+    document.querySelectorAll('.pop-tab').forEach(x => x.classList.toggle('active', x === t));
+    renderPopular();
+  };
+});
 
 // Jump to the Ideas tab and scroll to a specific idea's card, briefly
 // highlighting it. Clears the filter first so the card is guaranteed visible.
@@ -1159,6 +1446,26 @@ function matchesFilter(i) {
   return i.cat === activeFilter;
 }
 
+// Public memories other couples chose to share about this idea. Anonymous —
+// we never show who wrote it, and the public copy has no photos or address.
+function publicNotesFor(idea) {
+  if (!publicCache || !idea.sid) return '';
+  const notes = publicCache.filter(p => p.sid === idea.sid && p.notes);
+  if (!notes.length) return '';
+  const shown = notes.slice(0, 2);
+  return `
+    <div class="idea-public">
+      <div class="idea-public-h">What other couples said</div>
+      ${shown.map(p => `
+        <div class="pub-note">
+          ${p.rating ? `<span class="pub-stars">${'★'.repeat(p.rating)}${'☆'.repeat(5-p.rating)}</span> ` : ''}
+          ${esc(p.notes)}
+          <div class="pub-who">— a couple, ${esc(p.entry_date || '')}</div>
+        </div>`).join('')}
+      ${notes.length > 2 ? `<div class="pub-who">+ ${notes.length - 2} more</div>` : ''}
+    </div>`;
+}
+
 function renderIdeas() {
   updateFilterCounts();
   const g = document.getElementById('ideaGrid');
@@ -1197,15 +1504,26 @@ function renderIdeas() {
       <div class="idea-foot">
         <span class="area-tag">${esc(i.area||'London')}</span>
         <button class="heart ${i.fav?'on':''}" title="Favourite">${i.fav?'★':'☆'}</button>
-      </div>`;
+      </div>
+      ${publicNotesFor(i)}`;
     el.querySelector('.heart').onclick = async () => { i.fav=!i.fav; await saveIdeas(); renderIdeas(); };
-    el.querySelector('.wish-toggle').onclick = async () => { i.wish = !i.wish; await saveIdeas(); renderIdeas(); };
+    el.querySelector('.wish-toggle').onclick = async () => {
+      i.wish = !i.wish;
+      await saveIdeas();
+      bumpStat(i.sid, i.title, { wish: i.wish ? 1 : -1 });
+      renderIdeas();
+    };
     el.querySelector('.del').onclick = async () => {
       ideas = ideas.filter(x=>x.id!==i.id); await saveIdeas(); renderIdeas();
     };
     el.querySelector('.photo-add').onclick = () => pickPhoto(i);
     el.querySelector('.journal-add').onclick = () => startJournalFrom(i);
-    el.querySelector('.visit-toggle').onclick = async () => { i.visited = !i.visited; await saveIdeas(); renderIdeas(); };
+    el.querySelector('.visit-toggle').onclick = async () => {
+      i.visited = !i.visited;
+      await saveIdeas();
+      bumpStat(i.sid, i.title, { visit: i.visited ? 1 : -1 });
+      renderIdeas();
+    };
     const rm = el.querySelector('.photo-rm');
     if (rm) rm.onclick = async () => { i.photo=''; await saveIdeas(); renderIdeas(); };
     g.appendChild(el);
@@ -1360,9 +1678,10 @@ function renderEntries() {
     el.innerHTML = `
       <button class="del" title="Delete" style="opacity:1">✕</button>
       <button class="entry-edit" title="Edit">✎</button>
+      ${e.isPublic ? '<button class="entry-share" title="Share this memory">🔗</button>' : ''}
       <div class="entry-pad">
         <div class="entry-date">${fmtDate(e.date)}</div>
-        <h3>${esc(e.title)}</h3>
+        <h3>${esc(e.title)}${e.isPublic ? '<span class="entry-public-tag">🌍 Public</span>' : ''}</h3>
         ${e.rating?`<div class="entry-stars">${stars}</div>`:''}
         ${photoStrip}
         ${e.notes?`<p>${esc(e.notes)}</p>`:''}
@@ -1373,11 +1692,44 @@ function renderEntries() {
       </div>`;
     el.querySelector('.del').onclick = async () => {
       if (!confirm('Delete this journal entry?')) return;
-      entries = entries.filter(x=>x.id!==e.id); await saveEntries(); renderEntries();
+      entries = entries.filter(x=>x.id!==e.id);
+      await saveEntries();
+      // if it was public, take it down too
+      if (e.isPublic) { try { await unpublishEntry(e.id); await loadPublic(); } catch {} }
+      // pull this rating back out of the public average
+      if (e.rating) {
+        const m = ideas.find(i => i.title.trim().toLowerCase() === (e.title||'').trim().toLowerCase());
+        if (m) bumpStat(m.sid, m.title, { ratingSum: -e.rating, ratingN: -1 });
+      }
+      renderEntries();
+      renderIdeas();
     };
     el.querySelector('.entry-edit').onclick = () => startEditEntry(e);
+    const shareBtn = el.querySelector('.entry-share');
+    if (shareBtn) shareBtn.onclick = () => shareEntry(e);
     l.appendChild(el);
   });
+}
+
+// Copy a read-only link to one public memory.
+function shareEntry(e) {
+  const url = location.origin + location.pathname + '?entry=' + encodeURIComponent(publicIdFor(e.id));
+  copyLink(url, 'Link to this memory copied — anyone with it can read your note (no photos, no address).');
+}
+
+// Copy the app link so a friend can start their own space.
+function shareApp() {
+  const url = location.origin + location.pathname;
+  copyLink(url, 'App link copied! Send it to a friend — they just pick their own space code.');
+}
+
+function copyLink(url, msg) {
+  const done = () => alert(msg);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done, () => prompt('Copy this link:', url));
+  } else {
+    prompt('Copy this link:', url);
+  }
 }
 
 // Load an existing entry back into the form for editing.
@@ -1396,6 +1748,18 @@ function startEditEntry(e) {
     x.classList.toggle('on', +x.dataset.v <= formRating));
   entryFormPhotos = Array.isArray(e.photos) ? e.photos.slice() : [];
   renderEntryFormPhotos();
+  // restore the visibility toggle
+  formPublic = !!e.isPublic;
+  document.querySelectorAll('.vis-opt').forEach(x =>
+    x.classList.toggle('active', (x.dataset.vis === 'public') === formPublic));
+  const note = document.getElementById('visNote');
+  if (formPublic) {
+    note.textContent = 'Shared anonymously with everyone — your text and rating only. Photos and address stay private.';
+    note.classList.add('warn');
+  } else {
+    note.textContent = 'Only you two can see this.';
+    note.classList.remove('warn');
+  }
   document.getElementById('saveEntry').textContent = 'Update entry';
   document.getElementById('entryFormTitle').textContent = 'Edit this memory';
   form.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -1448,36 +1812,86 @@ document.getElementById('entryPhotoInput').addEventListener('change', async (e) 
   } catch { alert("Couldn't read that image — try another one."); }
 });
 
+// Visibility toggle for the entry form.
+let formPublic = false;
+document.querySelectorAll('.vis-opt').forEach(b => {
+  b.onclick = () => {
+    formPublic = b.dataset.vis === 'public';
+    document.querySelectorAll('.vis-opt').forEach(x => x.classList.toggle('active', x === b));
+    const note = document.getElementById('visNote');
+    if (formPublic) {
+      note.textContent = 'Shared anonymously with everyone — your text and rating only. Photos and address stay private. Don\'t write anything you wouldn\'t want strangers to read.';
+      note.classList.add('warn');
+    } else {
+      note.textContent = 'Only you two can see this.';
+      note.classList.remove('warn');
+    }
+  };
+});
+
 document.getElementById('saveEntry').onclick = async () => {
   const title = document.getElementById('e-title').value.trim();
   const date = document.getElementById('e-date').value;
   if (!title || !date) { return; }
+
+  const match = ideas.find(i => i.title.trim().toLowerCase() === title.toLowerCase());
 
   const payload = {
     date, title, rating: formRating,
     notes: document.getElementById('e-notes').value.trim(),
     area: document.getElementById('e-area').value.trim(),
     address: document.getElementById('e-address').value.trim(),
-    photos: entryFormPhotos.slice()
+    photos: entryFormPhotos.slice(),
+    isPublic: formPublic,
+    sid: match ? match.sid : null,
   };
 
+  // Remember the previous rating if we're editing, so we can swap it out of
+  // the public average instead of double-counting.
+  const prev = editingEntryId ? entries.find(x => x.id === editingEntryId) : null;
+  const prevRating = prev?.rating || 0;
+  const wasPublic = !!prev?.isPublic;
+
+  let entryId;
   if (editingEntryId) {
-    // Update the existing entry in place.
     const idx = entries.findIndex(x => x.id === editingEntryId);
     if (idx !== -1) entries[idx] = { ...entries[idx], ...payload };
+    entryId = editingEntryId;
   } else {
-    // Create a new entry.
-    entries.unshift({ id:'e'+Date.now(), ...payload });
+    entryId = 'e' + Date.now();
+    entries.unshift({ id: entryId, ...payload });
   }
 
   const ok = await saveEntries();
   if (!ok) { alert('Saving failed — photos may be too large. Try fewer or smaller images.'); return; }
 
-  // If this entry matches an idea by title, mark that idea as visited.
-  const match = ideas.find(i => i.title.trim().toLowerCase() === title.toLowerCase());
-  if (match && !match.visited) {
-    match.visited = true;
-    await saveIdeas();
+  // Publish / unpublish the anonymised copy.
+  const saved = entries.find(x => x.id === entryId);
+  try {
+    if (formPublic) {
+      await publishEntry(saved, match ? match.title : title);
+    } else if (wasPublic) {
+      await unpublishEntry(entryId);   // switched back to private — remove it
+    }
+    await loadPublic();
+  } catch { /* publishing is best-effort; the private entry is already saved */ }
+
+  // Mark the idea visited + feed the anonymous popularity counters.
+  if (match) {
+    if (!match.visited) {
+      match.visited = true;
+      await saveIdeas();
+      bumpStat(match.sid, match.title, { visit: 1 });
+    }
+    const newRating = formRating || 0;
+    if (!editingEntryId && newRating) {
+      bumpStat(match.sid, match.title, { ratingSum: newRating, ratingN: 1 });
+    } else if (editingEntryId && newRating !== prevRating) {
+      bumpStat(match.sid, match.title, {
+        ratingSum: newRating - prevRating,
+        ratingN: (newRating ? 1 : 0) - (prevRating ? 1 : 0),
+      });
+    }
   }
 
   resetEntryForm();
@@ -1493,7 +1907,12 @@ function resetEntryForm() {
   entryFormPhotos = [];
   renderEntryFormPhotos();
   formRating = 0;
+  formPublic = false;
   document.querySelectorAll('#ratePick .star-pick').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.vis-opt').forEach(x => x.classList.toggle('active', x.dataset.vis === 'private'));
+  const note = document.getElementById('visNote');
+  note.textContent = 'Only you two can see this.';
+  note.classList.remove('warn');
   document.getElementById('saveEntry').textContent = 'Save to journal';
   document.getElementById('entryFormTitle').textContent = 'How was it?';
   document.getElementById('entryForm').classList.remove('open');
@@ -1586,6 +2005,7 @@ function normSpace(s) {
 let appStarted = false;
 async function startApp() {
   await loadAll();
+  await loadPublic();
   renderFilters();
   renderIdeas();
   renderEntries();
@@ -1597,6 +2017,7 @@ async function startApp() {
     const toTop = document.getElementById('toTop');
     window.addEventListener('scroll', () => { toTop.classList.toggle('show', window.scrollY > 400); });
     toTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('shareAppBtn').onclick = shareApp;
   }
 }
 
@@ -1619,13 +2040,40 @@ document.getElementById('spaceInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('spaceBtn').click();
 });
 
+// Someone opened a shared memory link (?entry=pub_xxx): show just that note,
+// read-only, then invite them to start their own space.
+async function showSharedEntry(id) {
+  const e = await readPublicEntry(id);
+  document.getElementById('spaceGate').classList.add('hidden');
+  const view = document.getElementById('sharedView');
+  view.style.display = '';
+  if (!e) {
+    document.getElementById('sharedTitle').textContent = 'This memory is no longer shared';
+    document.getElementById('sharedNotes').textContent = '';
+    document.getElementById('sharedMeta').textContent = 'The couple may have made it private again.';
+  } else {
+    document.getElementById('sharedTitle').textContent = e.title || e.idea_title || 'A night out';
+    document.getElementById('sharedStars').textContent = e.rating ? '★'.repeat(e.rating) + '☆'.repeat(5-e.rating) : '';
+    document.getElementById('sharedNotes').textContent = e.notes || '';
+    document.getElementById('sharedMeta').textContent =
+      `Shared anonymously by a couple${e.entry_date ? ' · ' + e.entry_date : ''}. Photos and location stay private.`;
+  }
+  document.getElementById('sharedEnter').onclick = () => {
+    view.style.display = 'none';
+    history.replaceState({}, '', location.pathname);
+    document.getElementById('spaceGate').classList.remove('hidden');
+  };
+}
+
 (async () => {
+  const params = new URLSearchParams(location.search);
+  const shared = params.get('entry');
+  if (shared) { await showSharedEntry(shared); return; }
+
   if (SPACE) {
-    // returning user — already picked a space
     document.getElementById('spaceGate').classList.add('hidden');
     await startApp();
   } else {
-    // show the gate; prefill owner's space as a friendly default hint
     document.getElementById('spaceInput').focus?.();
   }
 })();

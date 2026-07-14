@@ -912,31 +912,20 @@ async function sbDelete(table, id) {
   }
 }
 
-// Replace the whole space's contents with the given list.
-// CRITICAL: only touches rows in the CURRENT space — never other couples' data.
-async function sbReplaceAll(table, list) {
-  if (list.length) {
-    const body = list.map(o => ({ id: rowId(o.id), data: o, updated_at: new Date().toISOString() }));
-    const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
-      method: 'POST',
-      headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
-      body: JSON.stringify(body),
-    });
-    if (!r.ok) throw new Error(table + ' batch upsert ' + r.status);
-  }
-  // delete rows no longer in the list — but ONLY within this space
-  const existing = await fetch(`${SB_URL}/rest/v1/${table}?select=id`, { headers: SB_HEADERS });
-  if (existing.ok) {
-    const keep = new Set(list.map(o => rowId(o.id)));
-    const prefix = SPACE + '::';
-    const rows = await existing.json();
-    const toDelete = rows
-      .map(r => r.id)
-      .filter(id => id && id.startsWith(prefix) && !keep.has(id));
-    for (const id of toDelete) {
-      try { await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, { method:'DELETE', headers: SB_HEADERS }); } catch {}
-    }
-  }
+// Save the given list into this space. SAFE BY DESIGN: this only ever
+// inserts/updates rows — it NEVER deletes anything. An earlier version diffed
+// against the cloud and deleted "missing" rows, which meant one incomplete
+// load could wipe real data (it cost Zoey her wishlist). Deletion now only
+// happens through sbDelete, when the user explicitly removes something.
+async function sbSaveAll(table, list) {
+  if (!list.length) return;
+  const body = list.map(o => ({ id: rowId(o.id), data: o, updated_at: new Date().toISOString() }));
+  const r = await fetch(`${SB_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) throw new Error(table + ' batch upsert ' + r.status);
 }
 
 // ---------- popular board (anonymous aggregate counts) ----------
@@ -1028,21 +1017,32 @@ function seedToIdea(s) {
 
 async function loadAll() {
   // Load ideas from the cloud
+  let loadFailed = false;
   try {
     ideas = await sbReadAll('ideas');
   } catch (e) {
     flagStorageProblem();
     ideas = [];
+    loadFailed = true;
   }
 
-  if (!ideas || !ideas.length) {
-    // Empty database: seed the shared library once.
+  // SAFETY: if the read failed we do NOT know what's in the cloud, so we must
+  // never seed or save — doing so would overwrite real data with defaults.
+  // (This is how a wishlist got wiped once. Never again.)
+  if (loadFailed) {
+    ideas = SEED.map(seedToIdea);   // show something, but purely local
+    try { entries = await sbReadAll('entries'); } catch { entries = []; }
+    return;
+  }
+
+  if (!ideas.length) {
+    // Genuinely empty space: seed the library once.
     ideas = SEED.map(seedToIdea);
     await saveIdeas();
   } else {
     let changed = false;
 
-    // Dedupe by sid, keep existing copies (their fav/photo/notes).
+    // Dedupe by sid, keep existing copies (their fav/photo/notes/wish/visited).
     const seen = new Map();
     const kept = [];
     ideas.forEach(i => {
@@ -1064,7 +1064,8 @@ async function loadAll() {
       if (!i.map)          { i.map = s.map;     changed = true; }
     });
 
-    // Add brand-new seed ideas nobody has saved yet.
+    // Add brand-new seed ideas nobody has saved yet. These are ADDED, never
+    // replacing an existing one — so your wish/visited flags survive updates.
     const missing = SEED.filter(s => !seen.has(s.sid)).map(seedToIdea);
     ideas = [...missing, ...kept];
     if (missing.length) changed = true;
@@ -1082,11 +1083,11 @@ async function loadAll() {
 }
 
 async function saveIdeas() {
-  try { await sbReplaceAll('ideas', ideas); lastIdeasJSON = JSON.stringify(ideas); return true; }
+  try { await sbSaveAll('ideas', ideas); lastIdeasJSON = JSON.stringify(ideas); return true; }
   catch (e) { flagStorageProblem(); return false; }
 }
 async function saveEntries() {
-  try { await sbReplaceAll('entries', entries); lastEntriesJSON = JSON.stringify(entries); return true; }
+  try { await sbSaveAll('entries', entries); lastEntriesJSON = JSON.stringify(entries); return true; }
   catch (e) { flagStorageProblem(); return false; }
 }
 
@@ -1514,7 +1515,10 @@ function renderIdeas() {
       renderIdeas();
     };
     el.querySelector('.del').onclick = async () => {
-      ideas = ideas.filter(x=>x.id!==i.id); await saveIdeas(); renderIdeas();
+      ideas = ideas.filter(x=>x.id!==i.id);
+      try { await sbDelete('ideas', i.id); } catch { flagStorageProblem(); }
+      await saveIdeas();
+      renderIdeas();
     };
     el.querySelector('.photo-add').onclick = () => pickPhoto(i);
     el.querySelector('.journal-add').onclick = () => startJournalFrom(i);
@@ -1693,6 +1697,7 @@ function renderEntries() {
     el.querySelector('.del').onclick = async () => {
       if (!confirm('Delete this journal entry?')) return;
       entries = entries.filter(x=>x.id!==e.id);
+      try { await sbDelete('entries', e.id); } catch { flagStorageProblem(); }
       await saveEntries();
       // if it was public, take it down too
       if (e.isPublic) { try { await unpublishEntry(e.id); await loadPublic(); } catch {} }
@@ -1982,7 +1987,7 @@ async function autoSync() {
     if (ej !== lastEntriesJSON) {
       entries = freshEntries;
       lastEntriesJSON = ej;
-      if (journalUnlocked) renderEntries();
+      renderEntries();
     }
   } catch (e) {
     // tolerate brief network blips; only warn after several failures

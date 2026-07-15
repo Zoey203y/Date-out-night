@@ -560,7 +560,9 @@
             <option>Active</option>
             <option>Cosy night</option>
             <option>Something new</option>
+            <option value="__new__">+ New category…</option>
           </select>
+          <input id="i-cat-new" placeholder="Your own category, e.g. Rainy day" style="display:none; margin-top:8px;">
         </div>
         <div class="field">
           <label>Area</label>
@@ -570,6 +572,10 @@
       <div class="field">
         <label>One-line recommendation (optional)</label>
         <input id="i-blurb" placeholder="e.g. Best on a clear evening, very romantic">
+      </div>
+      <div class="field">
+        <label>Address or Google Maps link (optional)</label>
+        <input id="i-map" placeholder="Paste a Google Maps link, or type an address">
       </div>
       <div class="field">
         <label>How much do you recommend it?</label>
@@ -1064,13 +1070,25 @@ async function loadAll() {
       if (!i.map)          { i.map = s.map;     changed = true; }
     });
 
-    // Add brand-new seed ideas nobody has saved yet. These are ADDED, never
-    // replacing an existing one — so your wish/visited flags survive updates.
-    const missing = SEED.filter(s => !seen.has(s.sid)).map(seedToIdea);
-    ideas = [...missing, ...kept];
-    if (missing.length) changed = true;
-
-    if (changed) await saveIdeas();
+    // SAFETY GUARD: only merge in brand-new seed ideas when the read looks
+    // COMPLETE. If we somehow read back far fewer ideas than we already have
+    // seeds for, the read was probably partial (a network blip) — merging then
+    // would re-add "missing" ideas as clean defaults and could clobber your
+    // wish/visited flags on the next save. In that case we render what we got
+    // but DON'T save, so the cloud is never overwritten with incomplete data.
+    const looksComplete = kept.length >= Math.min(SEED.length, 100);
+    if (looksComplete) {
+      // Add brand-new seed ideas nobody has saved yet. These are ADDED, never
+      // replacing an existing one — so your wish/visited flags survive updates.
+      const missing = SEED.filter(s => !seen.has(s.sid)).map(seedToIdea);
+      ideas = [...missing, ...kept];
+      if (missing.length) changed = true;
+      if (changed) await saveIdeas();
+    } else {
+      // Suspiciously small read — show it, but do not persist over the cloud.
+      ideas = kept;
+      flagStorageProblem();
+    }
   }
 
   // Load journal entries from the cloud
@@ -1228,7 +1246,11 @@ function startJournalFrom(idea) {
 function renderFilters() {
   const f = document.getElementById('filters');
   f.innerHTML = '';
-  CATS.forEach(c => {
+  // Base filters + any custom categories the user has invented, in use order.
+  const defaults = ["Food & drink","Culture","Outdoors","Active","Cosy night","Something new"];
+  const custom = [...new Set(ideas.map(i => i.cat).filter(c => c && !defaults.includes(c) && !CATS.includes(c)))].sort();
+  const allFilters = [...CATS, ...custom];
+  allFilters.forEach(c => {
     const count = c === 'All'
       ? ideas.length
       : c === 'Visited'
@@ -1578,6 +1600,26 @@ function downscaleImage(file, maxDim, quality) {
 document.getElementById('toggleIdeaForm').onclick = () =>
   document.getElementById('ideaForm').classList.toggle('open');
 
+// Show the "new category" text box only when that option is picked.
+document.getElementById('i-cat').onchange = function () {
+  const box = document.getElementById('i-cat-new');
+  if (this.value === '__new__') { box.style.display = ''; box.focus(); }
+  else box.style.display = 'none';
+};
+
+// Keep the category dropdown showing any custom categories already in use,
+// so you can reuse one you made earlier without retyping it.
+function refreshCategoryOptions() {
+  const sel = document.getElementById('i-cat');
+  const defaults = ['Food & drink','Culture','Outdoors','Active','Cosy night','Something new'];
+  const custom = [...new Set(ideas.map(i => i.cat).filter(c => c && !defaults.includes(c)))].sort();
+  const current = sel.value;
+  sel.innerHTML =
+    [...defaults, ...custom].map(c => `<option>${esc(c)}</option>`).join('') +
+    '<option value="__new__">+ New category…</option>';
+  if ([...sel.options].some(o => o.value === current)) sel.value = current;
+}
+
 let formRec = 0;
 document.querySelectorAll('#recPick .star-pick').forEach(s => {
   s.onclick = () => {
@@ -1590,23 +1632,46 @@ document.querySelectorAll('#recPick .star-pick').forEach(s => {
 document.getElementById('saveIdea').onclick = async () => {
   const title = document.getElementById('i-title').value.trim();
   if (!title) { document.getElementById('i-title').focus(); return; }
+
+  // Resolve the category: either a picked one, or a brand-new typed one.
+  let cat = document.getElementById('i-cat').value;
+  if (cat === '__new__') {
+    cat = document.getElementById('i-cat-new').value.trim();
+    if (!cat) { document.getElementById('i-cat-new').focus(); return; }
+  }
+
+  // Resolve the map link: a pasted Google Maps URL is used as-is; a plain
+  // address is turned into a Maps search link. Empty is fine.
+  const mapRaw = document.getElementById('i-map').value.trim();
+  let map = '';
+  if (mapRaw) {
+    map = /^https?:\/\//i.test(mapRaw)
+      ? mapRaw
+      : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(mapRaw);
+  }
+
   ideas.unshift({
     id: 'id'+Date.now(),
     title,
-    cat: document.getElementById('i-cat').value,
+    cat,
     area: document.getElementById('i-area').value.trim(),
     blurb: document.getElementById('i-blurb').value.trim(),
     rec: formRec,
     notes: document.getElementById('i-notes').value.trim(),
-    map: '',
+    map,
     photo: '',
     fav: false
   });
-  await saveIdeas();
-  ['i-title','i-area','i-blurb','i-notes'].forEach(id=>document.getElementById(id).value='');
+  const ok = await saveIdeas();
+  if (!ok) { alert('Saving failed — please check your connection and try again.'); return; }
+  ['i-title','i-area','i-blurb','i-notes','i-cat-new','i-map'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('i-cat-new').style.display = 'none';
+  document.getElementById('i-cat').value = 'Food & drink';
   formRec = 0;
   document.querySelectorAll('#recPick .star-pick').forEach(x=>x.classList.remove('on'));
   document.getElementById('ideaForm').classList.remove('open');
+  refreshCategoryOptions();
+  renderFilters();
   renderIdeas();
 };
 
@@ -1938,8 +2003,9 @@ document.getElementById('syncBtn').onclick = async () => {
   btn.textContent = '↻ Syncing…';
   btn.disabled = true;
   try {
-    ideas = await sbReadAll('ideas');
-    entries = await sbReadAll('entries');
+    ideas = mergeById(await sbReadAll('ideas'), ideas);
+    entries = mergeById(await sbReadAll('entries'), entries);
+    renderFilters();
     renderIdeas();
     renderEntries();
     btn.textContent = '✓ Up to date';
@@ -1977,15 +2043,21 @@ async function autoSync() {
     storageOk = true;
     document.getElementById('storageBanner').style.display = 'none';
 
-    const ij = JSON.stringify(freshIdeas);
+    // Merge, don't blindly replace: keep any local rows the cloud hasn't
+    // caught up to yet (e.g. an idea you just added whose save is still in
+    // flight). Otherwise a poll landing mid-save would make it vanish.
+    const mergedIdeas = mergeById(freshIdeas, ideas);
+    const ij = JSON.stringify(mergedIdeas);
     if (ij !== lastIdeasJSON) {
-      ideas = freshIdeas;
+      ideas = mergedIdeas;
       lastIdeasJSON = ij;
+      renderFilters();
       renderIdeas();
     }
-    const ej = JSON.stringify(freshEntries);
+    const mergedEntries = mergeById(freshEntries, entries);
+    const ej = JSON.stringify(mergedEntries);
     if (ej !== lastEntriesJSON) {
-      entries = freshEntries;
+      entries = mergedEntries;
       lastEntriesJSON = ej;
       renderEntries();
     }
@@ -1993,6 +2065,15 @@ async function autoSync() {
     // tolerate brief network blips; only warn after several failures
     if (++autoSyncFails >= 4) flagStorageProblem();
   }
+}
+
+// Merge cloud rows with local rows by id. Cloud wins for rows it has (that's
+// the shared truth), but local-only rows are preserved — so a just-added item
+// whose upload is still in flight doesn't disappear on the next poll.
+function mergeById(cloudList, localList) {
+  const cloudIds = new Set(cloudList.map(o => o.id));
+  const localOnly = localList.filter(o => !cloudIds.has(o.id));
+  return [...localOnly, ...cloudList];
 }
 
 // keep the local "last seen" snapshot in sync after our own saves too,
@@ -2011,6 +2092,7 @@ let appStarted = false;
 async function startApp() {
   await loadAll();
   await loadPublic();
+  refreshCategoryOptions();
   renderFilters();
   renderIdeas();
   renderEntries();
